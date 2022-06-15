@@ -10,7 +10,7 @@ const db = mysql.createConnection(
     database: process.env.DB_NAME,
     });
 
-connection.query = util.promisify(connection.query);
+db.query = util.promisify(db.query);
  
 
 //--QUERIES!--//
