@@ -118,7 +118,7 @@ async function getManagers() {
         });
         
     } catch (err) {
-        throw err;
+        console.log(err);
     }
 }
 
