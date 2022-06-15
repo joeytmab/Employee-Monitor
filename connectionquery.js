@@ -31,7 +31,7 @@ const viewByManagerQuery = `
     RIGHT JOIN role ON employee.role_id = role.id
     RIGHT JOIN department ON department_id = department.id
     RIGHT JOIN employee ON employee.manager_id = manager.id
-    
+
 `
 
 // role query
@@ -54,7 +54,7 @@ const viewAllEmployees = () => {
 // add employee query
 const addEmployee = () => {
     return db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", (first_name, last_name, role_id, manager_id) => {
-        console.table(first_name, last_name, role_id, manager_id)
+        console.log(first_name, last_name, role_id, manager_id)
     });
 }
 
@@ -78,14 +78,14 @@ async function getAllEmployeeNames() {
 // remove employee by id
 const removeEmployee = () => {
     return db.query("DELETE FROM employee WHERE id = ?", (id) => {
-        console.table(id)
+        console.log(id)
     });
 }
 
 // query for finding employee by first and last name.
 const getEmployeebyName = () => {
     return db.query(viewAllEmployeesQuery + " WHERE employee.first_name = ? AND employee.last_name = ?", (first_name, last_name) => {
-        console.table(first_name, last_name)
+        console.log(first_name, last_name)
     });
 }
 
@@ -93,14 +93,14 @@ const getEmployeebyName = () => {
 const viewAllbyDept = () => {
     return db.query(viewAllEmployeesQuery + " WHERE department.name = ?", (err, dept) => {
         if (err) throw err;
-        console.table(dept)
+        console.log(dept)
     });
 }
 
 // view all employees by assigned manager
 const viewAllByManager = () => {
     return db.query(viewByManagerQuery + " WHERE manager.first_name = ? AND manager.last_name = ?", (first_name, last_name) => {
-        console.table(first_name, last_name)
+        console.log(first_name, last_name)
     });
 }
 
@@ -149,14 +149,14 @@ async function getAllRoles() {
 // update employee role via query
 const updateEmployeeRole = () => {
     return db.query("UPDATE employee SET role_id = ? WHERE employee.id = ?", (role_id, id) => {
-        console.table(role_id, id)
+        console.log(role_id, id)
     });
 }
 
 // query to update manager of an employee
 const updateEmployeeManager = () => {
     return db.query("UPDATE employee SET manager_id = ? WHERE employee.id = ?", (manager_id, id) => {
-        console.table(manager_id, id)
+        console.log(manager_id, id)
     });
 }
 
@@ -165,7 +165,7 @@ const updateEmployeeManager = () => {
 // add role query
 const addRole = () => {
     return db.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", (title, salary, department_id) => {
-        console.table(title, salary, department_id)
+        console.log(title, salary, department_id)
     }); 
 }
 
@@ -179,21 +179,21 @@ async function getAllDepts() {
         });
         return { deptArray };
     } catch (err) {
-        console.table(err);
+        console.log(err);
     }
 }
 
 // query to get dept by name param
 const getDeptByName = () => {
     return db.query(viewAllDepartmentsQuery + " WHERE name = ?", (name) => {
-        console.table(name)
+        console.log(name)
     });
 }
 
 // remove role query
 const removeRole = () => {
     return db.query("DELETE FROM role WHERE title = ?", (title) => {
-        console.table(title)
+        console.log(title)
     });
 }
 
@@ -205,14 +205,14 @@ const viewAllDepts = () => {
 // query for adding dept
 const addDept = () => {
     return db.query("INSERT INTO department (name) VALUES (?)", (name) => {
-        console.table(name)
+        console.log(name)
     });
 }
 
 // Query to remove a department
 const removeDept = () => {
     return db.query("DELETE FROM department WHERE name = ?", (name) => {
-        console.table(name)
+        console.log(name)
     });
 }
 

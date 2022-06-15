@@ -1,4 +1,5 @@
 const cq = require("./connectionquery");
+const questions = require("./questions")
 
 async function init() {
     try {
@@ -21,10 +22,10 @@ async function mainMenu() {
         
         if (option === "View all departments") {
             // use query to view all departments, then log data
-            const deptList = await cq.viewAllDepts();
+            const deptData = await cq.viewAllDepts();
             //console.log NOT like console.table
             //console.table prints array as a table in console
-            console.table(deptList);
+            console.table(deptData);
              //return to main menu
             mainMenu();
 
@@ -32,7 +33,7 @@ async function mainMenu() {
             //use query to get list of all departments
             const {deptArray} = await cq.getAllDepts();
             //prompt user to view desired department
-            const dept = await questions.departmentPrompt(deptArray);
+            const dept = await questions.DeptPrompt(deptArray);
             //desired department passed through viewAllbyDept query to bring up all employees.
             const data = await cq.viewAllbyDept(dept);
             //for each loop; used to add up all salaries
@@ -46,163 +47,166 @@ async function mainMenu() {
            
             mainMenu();
 
-        } else if (action === "View all roles") {
-            // Use query to viewAllRoles
-            const data = await cq.viewAllRoles();
-            // Log data to a table
+        } else if (option === "View all roles") {
+            //query to view roles, log roledata
+            const roleData = await cq.viewAllRoles();
+            console.table(roleData);
+            
+            mainMenu();
+
+        } else if (option === "View all employees") {
+            //query to view all employees
+            const empData = await cq.viewAllEmployees();
+            console.table(empData);
+            
+            mainMenu();
+
+        } else if (option === "View all employees by department") {
+            //use query to get list of all departments
+            const {deptArray} = await cq.getAllDepts();
+            //prompt user to view desired department
+            const dept = await questions.deptPrompt(deptArray);
+            //desired department passed through viewallbyDept query to bring up all employees
+            const data = await cq.viewAllByDept(dept);
+            
             console.table(data);
-            // Run mainMenu()
+            
             mainMenu();
 
-        } else if (action === "View all employees") {
-            // Use cq to view all employees
-            const data = await cq.viewAllEmployees();
-            // Log data to a table
-            console.table(data);
-            // Run mainMenu()
+        } else if (option === "View all employees by Manager") {
+            //use query to get list of managers via getManagers in connectionquery.js
+            const {mgrArray} = await cq.getManagers();
+            //prompt user to view desired manager
+            const mgr = await questions.managerPrompt(mgrArray);
+            //managername split into first and last name into array
+            const mgrName = await mgr.split(" ");
+            //pass first and last name into viewallbymanager query; 
+            //brings up employees under that manager
+            const mgrData = await cq.viewAllByManager(mgrName[0], mgrName[1]);
+            
+            console.table(mgrData);
+            
             mainMenu();
 
-        } else if (action === "View all employees by department") {
-            // Get list of department names
-            const { departmentNames } = await cq.getAllDepts();
-            // Prompt user for a department
-            const { department } = await questions.departmentPrompt(departmentNames);
-            // Then pass the chosen department into query viewAllByDepartment
-            const data = await cq.viewAllByDepartment(department);
-            // Log data to a table
-            console.table(data);
-            // Run mainMenu()
+        } else if (option === "Add a department") {
+            //prompt user to add dept
+            const dept = await questions.addDeptPrompt();
+            //pass to add dept query
+            await cq.addDept(dept);
+           
             mainMenu();
 
-        } else if (action === "View all employees by Manager") {
-            // Get manager list using query getAllManager()
-            const managerList = await cq.getAllManager();
-            // Prompt user for a manager
-            const { manager } = await questions.managerPrompt(managerList);
-            // Split manager's name into an array of first and last name
-            const managerName = await manager.split(" ");
-            // Pass first and last name to query viewAllByManager
-            const data = await cq.viewAllByManager(managerName[0], managerName[1]);
-            // Log data to a table
-            console.table(data);
-            // Run mainMenu()
+        } else if (option === "Remove a department") {
+            //use query to get list of departments
+            const {deptArray} = await cq.getAllDepts();
+            //prompt for selecting department for removal
+            const {dept} = await questions.removeDeptPrompt(deptArray);
+            //pass dept into removeDept query
+            await cq.removeDept(dept);
+            
             mainMenu();
 
-        } else if (action === "Add a department") {
-            // Prompt user for the name of the department
-            const { department } = await questions.addDepartmentPrompt();
-            // Pass name to query for adding a department
-            await cq.addDepartment(department);
-            // Run mainMenu()
-            mainMenu();
-
-        } else if (action === "Remove a department") {
-            // Get list of all departments
-            const { departmentNames } = await cq.getAllDepts();
-            // Prompt user for which department to remove
-            const { department } = await questions.removeDepartmentPrompt(departmentNames);
-            // Pass department to query for removing a department
-            await cq.removeDepartment(department);
-            // Run mainMenu()
-            mainMenu();
-
-            } else if (action === "Add a role") {
-            // Get list of deparment names and data
-            const { departmentNames } = await cq.getAllDepts();
-            // Prompt user for role title, salary, and department
-            const { title, salary, department } = await questions.addRolePrompt(departmentNames);
-            // Get department data by department name
-            const chosenDepartment = await cq.getDepartmentByName(department);
-            // Get department_id
-            const department_id = chosenDepartment[0].id;
-            // Pass data for title, salary and department_id into query for adding a role
+            } else if (option === "Add a role") {
+            //use query to get list of departments
+            const {deptArray} = await cq.getAllDepts();
+            //addRolePrompt to input title, salary, dept
+            const { title, salary, department } = await questions.addRolePrompt(deptArray);
+            //get selected dept by getdeptbyname query
+            const selectedDept = await cq.getDepartmentByName(department);
+            //department_id from selectedDept.id
+            const department_id = selectedDept[0].id;
+            //pass the variable into addrole query
             await cq.addRole(title, salary, department_id);
-            // Run mainMenu()
+            
             mainMenu();
 
-        } else if (action === "Remove a role") {
-            // Get list of roles
-            const { roleTitles, roleList } = await cq.getAllRoles();
-            // Prompt user to chooes a role to remove
-            const { role } = await questions.chooseRole(roleTitles);
-            // Pass id to query for removing role
+        } else if (option === "Remove a role") {
+            //get list
+            const { roleTitles, listofRoles } = await cq.getAllRoles();
+            //removerolePrompt to remove desired role
+            const role = await questions.removeRolePrompt(roleTitles);
+            //pass role to removeRole query
             await cq.removeRole(role);
-            // Run mainMenu()
+            
             mainMenu();
 
-        } else if (action === "Add an employee") {
-            // Need list of roles and managers
-            const managerList = await cq.getAllManager();
-            const { roleTitles, roleList } = await cq.getAllRoles();
-            // Run prompt and get data
-            const { first_name, last_name, role, manager } = await questions.addEmployeePrompt(roleTitles, managerList);
-            // Use role and manager data to get id's
-            const chosenRole = roleList.filter(roleItem => roleItem.title === role);
-            const role_id = chosenRole[0].id;
-            const chosenManager = await manager.split(" ");
-            const data = await cq.viewAllByManager(chosenManager[0], chosenManager[1]);
-            const manager_id = data[0].id;
-            // Use data for first_name, last_name, role_id, and manager_id and cq to add employee
+        } else if (option === "Add an employee") {
+            //get list of managers via getmanagers query, and list of roles
+            const {mgrArray} = await cq.getManagers();
+            const { roleTitles, listofRoles } = await cq.getAllRoles();
+            //addemployeeprompt
+            const { first_name, last_name, role, manager } = await questions.addEmployeePrompt(roleTitles, mgrArray);
+            //use role and manager data to get id's
+            const selectedMgrName = await manager.split(" "); //again, split first and last name of mgr into array
+            const mgrData = await cq.viewAllByManager(selectedMgrName[0], selectedMgrName[1]);
+            const manager_id = mgrData[0].id;
+
+            const selectedRole = listofRoles.filter(chosenRole => chosenRole.title === role);
+            const role_id = selectedRole[0].id;
+
+            
+            //data for first_name, last_name, role_id, and manager_id
+            //pass this data into cq and addEmployee query
             await cq.addEmployee(first_name, last_name, role_id, manager_id);
-            // Run mainMenu()
+            
             mainMenu();
 
-        } else if (action === "Remove an employee") {
-            // Get list of employees
+        } else if (option === "Remove an employee") {
+            //get list of employees via getallemployeenames query
             const employeeNames = await cq.getAllEmployeeNames();
-            // Prompt user to choose an employee
-            const { employee } = await questions.chooseEmployee(employeeNames);
-            // Split employee name into an array of first and last name
-            const chosenEmployee = await employee.split(" ");
-            // Get id of employee by first and last name
-            const employeeData = await cq.getEmployeebyName(chosenEmployee[0], chosenEmployee[1]);
+            //user prompt to choose employee for removal
+            const employee = await questions.removeEmployeePrompt(employeeNames);
+            //split into first and last name
+            const selectedEmployee = await employee.split(" ");
+            //get id by passing name array into getEmp query to create datum
+            const employeeData = await cq.getEmployeebyName(selectedEmployee[0], selectedEmployee[1]);
             const id = employeeData[0].id;
-            // Use id and pass it on to query to remove employee
+            //id is selected to pass through remove query, deleting employee
             await cq.removeEmployee(id);
-            // Run mainMenu()
+            
             mainMenu();
 
-        } else if (action === "Update an employee's role") {
-            // Get list of employees and roles
+        } else if (option === "Update an employee's role") {
+            //need to first get list of employees, then list of roles
             const employeeNames = await cq.getAllEmployeeNames();
-            const { roleTitles, roleList } = await cq.getAllRoles();
-            // Prompt user to choose an employee and a role
+            const { roleTitles, listofRoles } = await cq.getAllRoles();
+            //update employee prompt
             const { employee, role } = await questions.updateEmployeeRole(employeeNames, roleTitles);
-            // Split employee name into an array of first and last name
-            const chosenEmployee = await employee.split(" ");
-            // Use role data to get its id
-            const chosenRole = roleList.filter(roleItem => roleItem.title === role);
-            const role_id = chosenRole[0].id;
-            // Get id of employee by first and last name
-            const employeeData = await cq.getEmployeebyName(chosenEmployee[0], chosenEmployee[1]);
+            //split array into first and last name
+            const selectedEmployee = await employee.split(" ");
+            //use role data to get id
+            const selectedRole = listofRoles.filter(chosenRole => chosenRole.title === role);
+            const role_id = selectedRole[0].id;
+            //get id of employee by first and last name
+            const employeeData = await cq.getEmployeebyName(selectedEmployee[0], selectedEmployee[1]);
             const id = employeeData[0].id;
-            // Use role_id and id and pass them on to query to update employee's role
+            //use role_id and id and pass them on to query to update employee's role
             await cq.updateEmployeeRole(role_id, id);
-            // Run mainMenu()
+            
             mainMenu();
 
-        } else if (action === "Update an employee's manager") {
-            // Get list of of employees and managers
+        } else if (option === "Update an employee's manager") {
+            //first need list of employees, then list of managers
             const employeeNames = await cq.getAllEmployeeNames();
-            const managerList = await cq.getAllManager();
-            // Prompt user for the employee and manager
+            const managerList = await cq.getManagers();
+            //prompt user for the employee and manager
             const { employee, manager } = await questions.updateEmployeeManager(employeeNames, managerList);
-            // Split employee name into an array of first and last name
-            const chosenEmployee = await employee.split(" ");
-            // Get id of employee by first and last name
-            const employeeData = await cq.getEmployeebyName(chosenEmployee[0], chosenEmployee[1]);
+            
+            const selectedEmployee = await employee.split(" ");
+            //id of emp by first and last name
+            const employeeData = await cq.getEmployeebyName(selectedEmployee[0], selectedEmployee[1]);
             const id = employeeData[0].id;
-            // Split manager's name into an array of first and last name
-            const managerName = await manager.split(" ");
-            // Pass first and last name to query viewAllByManager and get id of manager
-            const data = await cq.viewAllByManager(managerName[0], managerName[1]);
-            const manager_id = data[0].id;
-            // Pass manager_id and id into query to update an employee's manager
+            //split name into array
+            const selectedMgrName = await manager.split(" ");
+            //pass first and last name to query viewAllByManager and get id of manager
+            const mgrData = await cq.viewAllByManager(selectedMgrName[0], selectedMgrName[1]);
+            const manager_id = mgrData[0].id;
+            //pass manager_id and id into query to update an employee's manager
             await cq.updateEmployeeManager(manager_id, id);
-            // Run mainMenu()
+            
             mainMenu();
 
-        }  else if (action === "Exit") {
+        }  else if (option === "Exit") {
             // End connection
          cq.db.end();    
         }
