@@ -4,7 +4,7 @@ function mainMenu() {
     return inquirer.prompt([
         {
             type: "list",
-            name: "action",
+            name: "option",
             message: "What would you like to do?",
             choices: [
                 "View all departments",
