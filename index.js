@@ -1,6 +1,6 @@
 const cq = require("./connectionquery");
 
-async function main() {
+async function init() {
     try {
 
         mainMenu();
@@ -10,16 +10,49 @@ async function main() {
     }
 };
 
-main();
+init();
+
+
 
 async function mainMenu() {
     try {
-        // Prompt for mainMenu()
-        const { action } = await questions.mainMenu();
+        // main menu prompt
+        const {option} = await questions.mainMenu();
+        
+        if (option === "View all departments") {
+            // use query to view all departments, then log data
+            const deptList = await cq.viewAllDepts();
+            //console.log NOT like console.table
+            //console.table prints array as a table in console
+            console.table(deptList);
+             //return to main menu
+            mainMenu();
 
-        if (action === "Exit") {
-            // End connection
-         cq.db.end();
+        } else if (option === "View a department's budget") {
+            //use query to get list of all departments
+            const {deptArray} = await cq.getAllDepts();
+            //prompt user to view desired department
+            const dept = await questions.departmentPrompt(deptArray);
+            //desired department passed through viewAllbyDept query to bring up all employees.
+            const data = await cq.viewAllbyDept(dept);
+            //for each loop; used to add up all salaries
+            let budget = 0;
+            data.forEach(employee => {
+                return budget = budget + employee.salary;
+            });
+            console.log("----------------------------------------------");
+            console.log("Department selected: " + dept + "; Budget: $" + budget);
+            console.log("----------------------------------------------");
+           
+            mainMenu();
+
+        } else if (action === "View all roles") {
+            // Use query to viewAllRoles
+            const data = await cq.viewAllRoles();
+            // Log data to a table
+            console.table(data);
+            // Run mainMenu()
+            mainMenu();
 
         } else if (action === "View all employees") {
             // Use cq to view all employees
@@ -52,6 +85,48 @@ async function mainMenu() {
             const data = await cq.viewAllByManager(managerName[0], managerName[1]);
             // Log data to a table
             console.table(data);
+            // Run mainMenu()
+            mainMenu();
+
+        } else if (action === "Add a department") {
+            // Prompt user for the name of the department
+            const { department } = await questions.addDepartmentPrompt();
+            // Pass name to query for adding a department
+            await cq.addDepartment(department);
+            // Run mainMenu()
+            mainMenu();
+
+        } else if (action === "Remove a department") {
+            // Get list of all departments
+            const { departmentNames } = await cq.getAllDepts();
+            // Prompt user for which department to remove
+            const { department } = await questions.removeDepartmentPrompt(departmentNames);
+            // Pass department to query for removing a department
+            await cq.removeDepartment(department);
+            // Run mainMenu()
+            mainMenu();
+
+            } else if (action === "Add a role") {
+            // Get list of deparment names and data
+            const { departmentNames } = await cq.getAllDepts();
+            // Prompt user for role title, salary, and department
+            const { title, salary, department } = await questions.addRolePrompt(departmentNames);
+            // Get department data by department name
+            const chosenDepartment = await cq.getDepartmentByName(department);
+            // Get department_id
+            const department_id = chosenDepartment[0].id;
+            // Pass data for title, salary and department_id into query for adding a role
+            await cq.addRole(title, salary, department_id);
+            // Run mainMenu()
+            mainMenu();
+
+        } else if (action === "Remove a role") {
+            // Get list of roles
+            const { roleTitles, roleList } = await cq.getAllRoles();
+            // Prompt user to chooes a role to remove
+            const { role } = await questions.chooseRole(roleTitles);
+            // Pass id to query for removing role
+            await cq.removeRole(role);
             // Run mainMenu()
             mainMenu();
 
@@ -127,79 +202,9 @@ async function mainMenu() {
             // Run mainMenu()
             mainMenu();
 
-        } else if (action === "View all roles") {
-            // Use query to viewAllRoles
-            const data = await cq.viewAllRoles();
-            // Log data to a table
-            console.table(data);
-            // Run mainMenu()
-            mainMenu();
-
-        } else if (action === "Add a role") {
-            // Get list of deparment names and data
-            const { departmentNames } = await cq.getAllDepts();
-            // Prompt user for role title, salary, and department
-            const { title, salary, department } = await questions.addRolePrompt(departmentNames);
-            // Get department data by department name
-            const chosenDepartment = await cq.getDepartmentByName(department);
-            // Get department_id
-            const department_id = chosenDepartment[0].id;
-            // Pass data for title, salary and department_id into query for adding a role
-            await cq.addRole(title, salary, department_id);
-            // Run mainMenu()
-            mainMenu();
-
-        } else if (action === "Remove a role") {
-            // Get list of roles
-            const { roleTitles, roleList } = await cq.getAllRoles();
-            // Prompt user to chooes a role to remove
-            const { role } = await questions.chooseRole(roleTitles);
-            // Pass id to query for removing role
-            await cq.removeRole(role);
-            // Run mainMenu()
-            mainMenu();
-        
-        } else if (action === "View all departments") {
-            // Use query to viewAllDepartments
-            const data = await cq.viewAllDepartments();
-            // Log data to a table
-            console.table(data);
-            // Run mainMenu()
-            mainMenu();
-        } else if (action === "Add a department") {
-            // Prompt user for the name of the department
-            const { department } = await questions.addDepartmentPrompt();
-            // Pass name to query for adding a department
-            await cq.addDepartment(department);
-            // Run mainMenu()
-            mainMenu();
-        } else if (action === "Remove a department") {
-            // Get list of all departments
-            const { departmentNames } = await cq.getAllDepts();
-            // Prompt user for which department to remove
-            const { department } = await questions.removeDepartmentPrompt(departmentNames);
-            // Pass department to query for removing a department
-            await cq.removeDepartment(department);
-            // Run mainMenu()
-            mainMenu();
-        } else if (action === "View a department's budget") {
-            // Get list of all departments
-            const { departmentNames } = await cq.getAllDepts();
-            // Prompt user for which department to view
-            const { department } = await questions.departmentPrompt(departmentNames);
-            // Then pass the chosen department into query viewAllByDepartment
-            const data = await cq.viewAllByDepartment(department);
-            // Combine the salaries
-            let budget = 0;
-            data.forEach(employee => {
-                return budget += employee.salary;
-            });
-            // Print to console
-            console.log("\n----------------------------------------------\n\n Budget for the "
-                        + department + " department: $" 
-                        + budget + "\n\n----------------------------------------------\n");
-            // Run mainMenu()
-            mainMenu();
+        }  else if (action === "Exit") {
+            // End connection
+         cq.db.end();    
         }
  
     } catch (err) {
