@@ -8,12 +8,12 @@ Employee Monitor is an application that allows user interaction with information
 
 The app is dynamically designed for business/company owners looking to manufacture a digital database structured around employee, job role, and job department parameters.
 
-[SchemaOutline](./assets/schemaoutline.png)
+![SchemaOutline](./assets/schemaoutline.png)
 
 # Video depicting application functionality can be viewed in two parts:
 
-[Part 1](https://www.youtube.com/watch?v=x6ZU0GuUyG8)
-[Part 2](https://www.youtube.com/watch?v=eyr64aVGG8Q)
+[Part 1](https://www.youtube.com/watch?v=x6ZU0GuUyG8) </br>
+[Part 2](https://www.youtube.com/watch?v=eyr64aVGG8Q) </br>
 
 ## Installation Parameters
 
