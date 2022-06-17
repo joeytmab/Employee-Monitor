@@ -45,8 +45,6 @@ async function runMainLoop() {
             
             runMainLoop();
 
-        
-
         } else if (option === "View all employees by department") {
             
             const {departmentArr} = await queries.getAllDepts();
@@ -212,8 +210,6 @@ async function runMainLoop() {
 
             const goodbyeLogo = logo({name: "Goodbye!"}).render();
             console.log(goodbyeLogo);
-
-
 
             queries.db.end();
         }
