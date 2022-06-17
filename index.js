@@ -84,7 +84,6 @@ async function runMainLoop() {
 
             console.log("\n----------------------------------------------")
             console.log(`The ${department} Department has been liquidated.`)
-            console.log(`Starting salary: $${salary}`)
             console.log("----------------------------------------------\n")
             
             runMainLoop();
@@ -180,7 +179,7 @@ async function runMainLoop() {
             const managerName = await manager.split(" ");
             const data = await queries.viewAllByManager(managerName[0], managerName[1]);
             const manager_id = data[0].id;
-            await queries.updateEmpMgrPrompt(manager_id, id);
+            await queries.updateEmployeeManager(manager_id, id);
         
             console.log("\n----------------------------------------------")
             console.log(`${manager} has been redesignated as the direct superior of ${employee}.`)
