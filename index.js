@@ -99,7 +99,7 @@ async function runMainLoop() {
 
         } else if (option === "Remove a role") {
             
-            const {roleArr, roleLis } = await queries.getAllRoles();
+            const {roleArr, roleList } = await queries.getAllRoles();
             const {role} = await prompts.removeRolePrompt(roleArr);
             await queries.removeRole(role);
 
