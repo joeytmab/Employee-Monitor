@@ -17,11 +17,11 @@ The app is dynamically designed for business/company owners looking to manufactu
 
 ## Installation Parameters
 
-`npm i` and is necessary for proper function of the app.
+`npm i` is necessary for proper function of the app.
 
-In the event that initial packages do not suffice and the application cannot function, `npm i mysql2 util inquirer`can help manually install the MySQL, Util, and Inquirer packages.
+In the event that initial packages do not suffice and the application cannot function, `npm i mysql2 util inquirer` can help manually install the MySQL, Util, and Inquirer packages.
 
-`npm i console.table asciiart-logo` were also included to download Console.Table and ASCIIArt-Logo packages. These are not necessary for functionality and only help with aesthetic augmentation of the app.
+`npm i console.table asciiart-logo` is a command also included to download Console.Table and ASCIIArt-Logo packages. These are not necessary for functionality and only help with aesthetic augmentation of the app.
 
 Once completed, run the command `node index.js` to open the question prompts and begin creation, viewing, and formatting of the database.
 
